@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>时间轴</title>
+    <link rel="stylesheet" href="assets/css/LemonWall.css" type="text/css"/>
+</head>
+<body class="body">
+    <div class="wrapper">
+        <div class="articles container" style="margin-top: 0">
+            <div class="vertical"></div>
+
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    var index = 1;
+    var lazy = 0;
+    $(document).scroll(function() {
+        var scroH = $(document).scrollTop();  //滚动高度
+        var viewH = $(window).height();  //可见高度
+        var contentH = $(document).height();  //内容高度
+        if (contentH - (scroH + viewH) <= 100 && lazy == 0){  //距离底部高度小于100px
+            lazy =1;
+            index+=1;
+            getData();
+        }
+        if (contentH - (scroH + viewH)>1000){  //滚动条滑到底部啦
+            lazy = 0;
+        }
+
+    });
+
+    $(function(){
+        // 执行代码
+        getData();
+    });
+    function getData() {
+        $.ajax({
+            type: "GET",
+            url: "/sysWord/getData?page="+index,
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function(data){
+
+                var html = "";
+                for (var key in data){
+                    var arr = new Array();
+                    arr = data[key];
+                    if (arr == null || arr.length == 0)
+                        return;
+                    if (!$("#"+key).length>0){
+                        var height = 140+127*arr.length;
+                        html += "<div class=\"fn-clear\" id=\""+arr[0].yearMonth+"\" attr='"+arr[0].yearMonth+"' data-count="+arr.length+" style=\"height: "+height+"px;\">";
+                        html += "<h2>\n" +
+                            "<span class=\"article-archive\">\n" +
+                            ""+key.substring(0,4)+"年 "+key.substring(5,key.length)+" 月\n" +
+                            "</span>\n" +
+                            "</h2>"
+                    } else {
+                        var height = parseInt($("#"+key).css("height").replace("px",""))+117*arr.length;
+                        $("#"+key).css("height",height);
+                    }
+                    for (var i = 0;i<arr.length;i++){
+                        var top
+                        if (!$("#"+key).length>0) {
+                            top = (i%2==0?60+(127*i):80+(127*i));
+                        }else{
+                            top = parseInt($("#"+key+" article").get($("#"+key+" article").length-1)
+                                .style.top.replace("px",""))+(127*i);
+                        }
+                        html += '<article class="'+(i%2==0?'l':'r')+'" style="top: '+top+'px; position: absolute;">';
+                        html += '<div class="module">\n' +
+                            '<div class="dot"></div>\n' +
+                            '<div class="arrow"></div>\n' +
+                            '<time class="article-time">\n' +
+                            '    <span>\n' +
+                            '        '+arr[i].time.replace('T',' ').substring(2,16)+'\n' +
+                            '    </span>\n' +
+                            '</time>\n' +
+                            '<h3 class="article-title">\n' +
+                            ''+arr[i].words+'\n' +
+                            '</h3>\n' +
+                            '</div>'
+                        html += '</article>'
+                    }
+                    if (!$("#"+key).length>0){
+                         html += "</div>"
+                    }
+                }
+                if (!$("#"+key).length>0){
+                    $(".articles").append(html);
+                }else{
+                    $("#"+key).appendTo(html);
+                }
+            },
+            error: function (jqXHR) {
+                console.log("error");
+                console.log(jqXHR);
+            }
+        });
+    }
+</script>
+</html>
