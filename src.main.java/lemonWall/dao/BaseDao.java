@@ -1,6 +1,7 @@
 package lemonWall.dao;
 
 
+import lemonWall.utils.JsonRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -12,6 +13,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class BaseDao {
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    public JsonRowMapper JSON_ROW_MAPPER = new JsonRowMapper();
     /**
      *  @author: huang.zh
      *  @Date: 2019/8/24 0024 0:18

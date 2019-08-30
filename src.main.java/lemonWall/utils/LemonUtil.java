@@ -1,4 +1,4 @@
-package lemonWall;
+package lemonWall.utils;
 
 public class LemonUtil {
 
