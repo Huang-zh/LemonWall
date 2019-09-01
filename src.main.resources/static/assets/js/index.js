@@ -37,6 +37,8 @@
 		
 		function init()
 		{
+            if($("#carouselContainer").find("figure").length == 0)
+                return;
 			w = $(window);
 			container = $( '#contentContainer' );
 			carousel = $( '#carouselContainer' );
@@ -67,7 +69,8 @@
 			window.addEventListener( "mousemove", onMouseMove, false );
 			ticker = setInterval( looper, 1000/60 );			
 		}
-		
+
+
 		function animateIn( $item, $block )
 		{
 			var $nrX = 360 * getRandomInt(2);
